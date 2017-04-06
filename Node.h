@@ -50,16 +50,16 @@ public:
     }
 
     /** Constructor for an octree given a set of points*/
-    OctreeNode(glm::vec3 pos, float s, PointSet ps, int lvl)
-        : m_Position(pos), m_HalfSize(s), m_PointSet(ps), m_Level(lvl)
+    OctreeNode(std::shared_ptr<OctreeNode> parent, glm::vec3 pos, float s, PointSet ps, int lvl)
+        : m_Parent(parent), m_Position(pos), m_HalfSize(s), m_PointSet(ps), m_Level(lvl)
     {
         m_BoundingBox = this->CreateBoundingBox(pos, s);
         BuildTree();
     }
 
     /** Constructor for an octree given a set of points, plus an AABB*/
-    OctreeNode(glm::vec3 pos, float s, PointSet ps, AABB aabb, int lvl = 0)
-        : m_Position(pos), m_HalfSize(s), m_PointSet(ps), m_BoundingBox(aabb), m_Level(lvl)
+    OctreeNode(std::shared_ptr<OctreeNode> parent, glm::vec3 pos, float s, PointSet ps, AABB aabb, int lvl = 0)
+        : m_Parent(parent), m_Position(pos), m_HalfSize(s), m_PointSet(ps), m_BoundingBox(aabb), m_Level(lvl)
     {
         BuildTree();
     }
@@ -77,8 +77,8 @@ public:
         glm::vec3 p = m_Position;
         AABB CAABB[8];
         float Q = m_HalfSize / 2.0f;
-
-        std::cout << "Number of Points is this node " << m_PointSet.size() << std::endl;
+        std::cout << (m_Parent == nullptr ? "Root Node" : "") << std::endl;
+        std::cout << "Number of Points for Node " << m_Level << ": " << m_PointSet.size() << std::endl;
         if(m_PointSet.size() <= 0)
         {
             std::cout << "Empty Point Set" << std::endl;
@@ -124,7 +124,7 @@ public:
                         indexPassed.push_back(j);
                     }
                 }
-                std::cout << "Index Passed: " << indexPassed.size() << " For local leaf " << i << std::endl;
+                //std::cout << "Index Passed: " << indexPassed.size() << " For local leaf " << i << std::endl;
 
                 std::vector<glm::vec3> PassedPositions;
                 if(indexPassed.size() > 0)
@@ -134,7 +134,7 @@ public:
                 }
                 if(indexPassed.size() > 3)
                 {
-                    m_Childs[i] = (std::shared_ptr<OctreeNode>) new OctreeNode(CP[i], Q, PassedPositions, m_Level+1);
+                    m_Childs[i] = (std::shared_ptr<OctreeNode>) new OctreeNode((std::shared_ptr<OctreeNode>)this, CP[i], Q, PassedPositions, m_Level+1);
                     numberOfChilds++;
                     cycles++;
                     std::cout << "Childs: " << cycles << std::endl;

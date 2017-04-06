@@ -38,14 +38,14 @@ int main()
     std::uniform_real_distribution<GLfloat> randomFloats(-5.0, 5.0);
     std::default_random_engine generator;
 
-    for(int i = 0; i < 5; ++i)
-        for(int j = 0; j < 5; ++j)
-            for(int k = 0; k < 5; ++k)
+    for(int i = 0; i < 8; ++i)
+        for(int j = 0; j < 8; ++j)
+            for(int k = 0; k < 8; ++k)
                 ps.push_back(glm::vec3(randomFloats(generator), randomFloats(generator), randomFloats(generator)));
 
     glPointSize(5.0);
     glfwSetCursorPos(window, 0.5, 0.5);
-    std::shared_ptr<OctreeNode> RootNode = (std::shared_ptr<OctreeNode>) new OctreeNode(glm::vec3(0.0), 5.0, ps, 0);
+    std::shared_ptr<OctreeNode> RootNode = (std::shared_ptr<OctreeNode>) new OctreeNode(nullptr, glm::vec3(0.0), 5.0, ps, 0);
     glm::vec3 point = glm::vec3(0,0,0);
     glm::mat4 projection = glm::perspective(75.0f, width/height, 0.1f, 1000.0f);
     GLuint VAO, VBO;
