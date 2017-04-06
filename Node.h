@@ -43,7 +43,7 @@ class OctreeNode
 public:
     /**Constructor for a raw octree*/
     OctreeNode(glm::vec3 pos, float s)
-        : m_Position(pos), m_Size(s)
+        : m_Position(pos), m_HalfSize(s)
     {
         m_BoundingBox = this->CreateBoundingBox(pos, s);
         BuildTree();
@@ -51,7 +51,7 @@ public:
 
     /** Constructor for an octree given a set of points*/
     OctreeNode(glm::vec3 pos, float s, PointSet ps, int lvl)
-        : m_Position(pos), m_Size(s), m_PointSet(ps), m_Level(lvl)
+        : m_Position(pos), m_HalfSize(s), m_PointSet(ps), m_Level(lvl)
     {
         m_BoundingBox = this->CreateBoundingBox(pos, s);
         BuildTree();
@@ -59,7 +59,7 @@ public:
 
     /** Constructor for an octree given a set of points, plus an AABB*/
     OctreeNode(glm::vec3 pos, float s, PointSet ps, AABB aabb, int lvl = 0)
-        : m_Position(pos), m_Size(s), m_PointSet(ps), m_BoundingBox(aabb), m_Level(lvl)
+        : m_Position(pos), m_HalfSize(s), m_PointSet(ps), m_BoundingBox(aabb), m_Level(lvl)
     {
         BuildTree();
     }
@@ -76,11 +76,9 @@ public:
         glm::vec3 CP[8];
         glm::vec3 p = m_Position;
         AABB CAABB[8];
-        float HalfSize = m_Size/2.0f;
-        float Q = HalfSize / 2.0f;
+        float Q = m_HalfSize / 2.0f;
 
-        std::cout << "Level: " << m_Level << std::endl;
-
+        std::cout << "Number of Points is this node " << m_PointSet.size() << std::endl;
         if(m_PointSet.size() <= 0)
         {
             std::cout << "Empty Point Set" << std::endl;
@@ -101,20 +99,20 @@ public:
             /** Now we create the new positions for the child nodes*/
 
             /** Upper part of the tree*/
-            CP[UP_TOP_LEFT]         = glm::vec3(p.x - Q, p.y + Q, p.z - Q);
-            CP[UP_TOP_RIGHT]        = glm::vec3(p.x - Q, p.y + Q, p.z + Q);
-            CP[UP_BOTTOM_RIGHT]     = glm::vec3(p.x + Q, p.y + Q, p.z + Q);
-            CP[UP_BOTTOM_LEFT]      = glm::vec3(p.x + Q, p.y + Q, p.z - Q);
+            CP[UP_TOP_LEFT]         = glm::vec3(p.x - Q, p.y + Q, p.z + Q);
+            CP[UP_TOP_RIGHT]        = glm::vec3(p.x - Q, p.y + Q, p.z - Q);
+            CP[UP_BOTTOM_RIGHT]     = glm::vec3(p.x + Q, p.y + Q, p.z - Q);
+            CP[UP_BOTTOM_LEFT]      = glm::vec3(p.x + Q, p.y + Q, p.z + Q);
 
             /** Lower part of the tree*/
-            CP[DOWN_TOP_LEFT]       = glm::vec3(p.x - Q, p.y - Q, p.z - Q);
-            CP[DOWN_TOP_RIGHT]      = glm::vec3(p.x - Q, p.y - Q, p.z + Q);
-            CP[DOWN_BOTTOM_RIGHT]   = glm::vec3(p.x + Q, p.y - Q, p.z + Q);
-            CP[DOWN_BOTTOM_LEFT]    = glm::vec3(p.x + Q, p.y - Q, p.z - Q);
+            CP[DOWN_TOP_LEFT]       = glm::vec3(p.x - Q, p.y - Q, p.z + Q);
+            CP[DOWN_TOP_RIGHT]      = glm::vec3(p.x - Q, p.y - Q, p.z - Q);
+            CP[DOWN_BOTTOM_RIGHT]   = glm::vec3(p.x + Q, p.y - Q, p.z - Q);
+            CP[DOWN_BOTTOM_LEFT]    = glm::vec3(p.x + Q, p.y - Q, p.z + Q);
 
             for(auto i = 0; i < 8; ++i)
             {
-                CAABB[i] = CreateBoundingBox(CP[i], HalfSize);
+                CAABB[i] = CreateBoundingBox(CP[i], Q);
 
                 std::vector<int> indexPassed;
                 for(int j = 0; j < m_PointSet.size(); j++)
@@ -126,7 +124,7 @@ public:
                         indexPassed.push_back(j);
                     }
                 }
-                std::cout << "Index Passed: " << indexPassed.size() << std::endl;
+                std::cout << "Index Passed: " << indexPassed.size() << " For local leaf " << i << std::endl;
 
                 std::vector<glm::vec3> PassedPositions;
                 if(indexPassed.size() > 0)
@@ -136,7 +134,7 @@ public:
                 }
                 if(indexPassed.size() > 3)
                 {
-                    m_Childs[i] = (std::shared_ptr<OctreeNode>) new OctreeNode(CP[i], HalfSize, PassedPositions, m_Level+1);
+                    m_Childs[i] = (std::shared_ptr<OctreeNode>) new OctreeNode(CP[i], Q, PassedPositions, m_Level+1);
                     numberOfChilds++;
                     cycles++;
                     std::cout << "Childs: " << cycles << std::endl;
@@ -196,7 +194,7 @@ private:
 
     glm::vec3 m_Position;
     AABB m_BoundingBox;
-    float m_Size;
+    float m_HalfSize;
     bool isLeaf = false;
 };
 

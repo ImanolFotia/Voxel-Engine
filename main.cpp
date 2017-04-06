@@ -35,12 +35,12 @@ int main()
 
     srand(time(0));
 
-    std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0);
+    std::uniform_real_distribution<GLfloat> randomFloats(-5.0, 5.0);
     std::default_random_engine generator;
 
-    for(int i = 0; i < 10; ++i)
-        for(int j = 0; j < 10; ++j)
-            for(int k = 0; k < 10; ++k)
+    for(int i = 0; i < 5; ++i)
+        for(int j = 0; j < 5; ++j)
+            for(int k = 0; k < 5; ++k)
                 ps.push_back(glm::vec3(randomFloats(generator), randomFloats(generator), randomFloats(generator)));
 
     glPointSize(5.0);
