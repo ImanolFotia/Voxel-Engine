@@ -1,0 +1,25 @@
+# depslib dependency file v1.0
+1491451753 source:c:\users\imanol\documents\code\c++\voxel octree\main.cpp
+	<iostream>
+	<GL/glew.h>
+	<GLFW/glfw3.h>
+	<shader.h>
+	<camera.h>
+	<Node.h>
+	<random>
+	<ctime>
+
+1491452191 c:\users\imanol\documents\code\c++\voxel octree\node.h
+	<unordered_map>
+	<memory>
+	<glm/glm.hpp>
+	<vector>
+	<iostream>
+	<exception>
+
+1491444736 c:\users\imanol\documents\code\c++\voxel octree\camera.h
+	<vector>
+	<GL/glew.h>
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+
