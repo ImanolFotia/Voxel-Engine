@@ -147,12 +147,12 @@ public:
             CP[DOWN_BOTTOM_RIGHT]   = glm::vec3(p.x + Q, p.y - Q, p.z - Q);
             CP[DOWN_BOTTOM_LEFT]    = glm::vec3(p.x + Q, p.y - Q, p.z + Q);
 
-            for(auto i = 0; i < 8; ++i)
+            for(int i = 0; i < 8; ++i)
             {
                 CAABB[i] = CreateBoundingBox(CP[i], Q);
 
                 std::vector<int> indexPassed;
-                for(int j = 0; j < m_PointSet.size(); j++)
+                for(int j = 0; j < m_PointSet.size(); ++j)
                 {
                     bool passed = false;
                     passed = isPointInBox(m_PointSet[j], CAABB[i]);
@@ -230,7 +230,7 @@ public:
     void RenderNode(GLuint shader, glm::mat4 projection, glm::mat4 view)
     {
 
-        //if(isLeaf)
+        if(isLeaf)
         {
             glm::mat4 model = glm::translate(glm::mat4(), m_Position);
             model = glm::scale(model, glm::vec3((m_HalfSize)));
@@ -240,14 +240,14 @@ public:
             glUniform1f(glGetUniformLocation(shader, "Level"), (float)m_Level);
             renderQuad();
         }
-        //else
+
         {
-            for(int i = 0; i < m_Childs.size(); ++i)
+            for(auto c: m_Childs)
             {
-                if(m_Childs[i] == nullptr)
+                if(c.second == nullptr)
                     continue;
 
-                m_Childs[i]->RenderNode(shader, projection, view);
+                c.second->RenderNode(shader, projection, view);
             }
         }
 

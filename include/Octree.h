@@ -42,7 +42,7 @@ private:
         float x = 0, y = 0, z = 0;
         float mx = 0, my = 0, mz = 0;
 
-        for(int i = 0; i < m_PointSet.size(); i++)
+        for(int i = 0; i < m_PointSet.size(); ++i)
         {
             float tmpx = m_PointSet[i].x;
             if(tmpx > x)
