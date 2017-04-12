@@ -177,9 +177,9 @@ public:
                         PassedPositions.push_back(m_PointSet.at(indexPassed.at(k)));
                 }
 
-                auto greater_or_equal_to_2 = [](int x) -> int {return x >= 2;};
+                auto greater_or_equal_to_2 = [](std::vector<auto> x) -> int {return x.size() >= 2;};
 
-                if(greater_or_equal_to_2(indexPassed.size()))
+                if(greater_or_equal_to_2(indexPassed))
                 {
                     m_Childs[i] = (std::shared_ptr<OctreeNode>) new OctreeNode((std::shared_ptr<OctreeNode>)this, CP[i], Q, PassedPositions, m_Level+1);
                     numberOfChilds++;
