@@ -2,64 +2,56 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <shader.h>
-#include <camera.h>
-#include <Node.h>
+#include <include/camera.h>
+#include <include/Node.h>
 #include <random>
 #include <ctime>
+#include <include/bunny.h>
+#include <include/bone.h>
+#include <include/pelbis.h>
+#include <include/Octree.h>
+#include <include/PointCloud.h>
 
 using namespace std;
 
 void mouse_callback();
-bool keys[1024];
+void Do_Movement();
+
+Camera camera(glm::vec3(0,0,0));
+
 GLfloat lastX = 400, lastY = 300;
 bool firstMouse = true;
-float mouseScrollY = 10;
-void Do_Movement();
-GLFWwindow* window;
+bool keys[1024];
+
 double deltaTime, lastFrame;
-Camera camera(glm::vec3(0,0,0));
-float width = 1280, height = 720;
+
+float mouseScrollY = 10;
+const float width = 1280, height = 720;
+
+GLFWwindow* window;
+
 int main()
 {
     glfwInit();
-    window = glfwCreateWindow(width, height, "Octree", nullptr, nullptr);
+    window = glfwCreateWindow(width, height, "Sparse Voxel Octree", 0, nullptr);
     glfwMakeContextCurrent(window);
 
     glewExperimental = true;
     glewInit();
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glLineWidth(3.0);
+    glPointSize(10.0);
 
     GLuint shader = crearShader("vertex.glsl", "fragment.glsl");
 
-    std::vector<glm::vec3> ps;
 
-    srand(time(0));
+    int numPoints = (sizeof(bone) / sizeof(float))/3;
 
-    std::uniform_real_distribution<GLfloat> randomFloats(-5.0, 5.0);
-    std::default_random_engine generator;
+    std::shared_ptr<PointCloud> pointCloud = (std::shared_ptr<PointCloud>) new PointCloud(bone, numPoints);
+    std::shared_ptr<Octree> SVO = (std::shared_ptr<Octree>) new Octree(pointCloud->getPointData());
 
-    for(int i = 0; i < 8; ++i)
-        for(int j = 0; j < 8; ++j)
-            for(int k = 0; k < 8; ++k)
-                ps.push_back(glm::vec3(randomFloats(generator), randomFloats(generator), randomFloats(generator)));
-
-    glPointSize(5.0);
-    glfwSetCursorPos(window, 0.5, 0.5);
-    std::shared_ptr<OctreeNode> RootNode = (std::shared_ptr<OctreeNode>) new OctreeNode(nullptr, glm::vec3(0.0), 5.0, ps, 0);
-    glm::vec3 point = glm::vec3(0,0,0);
     glm::mat4 projection = glm::perspective(75.0f, width/height, 0.1f, 1000.0f);
-    GLuint VAO, VBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3), &point, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (GLvoid*)0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
 
-    glLineWidth(3.0);
     while(!glfwWindowShouldClose(window))
     {
         GLfloat currentFrame = glfwGetTime();
@@ -69,19 +61,15 @@ int main()
         Do_Movement();
 
         glfwPollEvents();
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         glUseProgram(shader);
-        glBindVertexArray(VAO);
-        for(int i = 0; i < ps.size(); ++i){
-                glm::mat4 model = glm::translate(glm::mat4(), ps[i]);
-        glm::mat4 MVP = projection * camera.GetViewMatrix() * model;
-        glUniformMatrix4fv(glGetUniformLocation(shader, "MVP"), 1, GL_FALSE, &MVP[0][0]);
 
-        glDrawArrays(GL_POINTS, 0, 1);
-        }
+        //pointCloud->Render(shader, projection, camera.GetViewMatrix());
+
+        SVO->Render(shader, projection, camera.GetViewMatrix());
+
         glUseProgram(0);
-        glBindVertexArray(0);
 
         glfwSwapBuffers(window);
     }

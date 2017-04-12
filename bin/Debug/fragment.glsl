@@ -2,8 +2,13 @@
 
 out vec4 FragColor;
 
+uniform bool isQuad;
+uniform float Level;
 
 void main()
 {
-	FragColor = vec4(0.5, 0.4, 0.1, 1.0);
+	FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+
+	if(isQuad)
+		FragColor = normalize(vec4(0.0,(Level+1)/12, 1.0, 1.0));
 }

@@ -1,15 +1,20 @@
 # depslib dependency file v1.0
-1491454901 source:c:\users\imanol\documents\code\c++\voxel octree\main.cpp
+1491766106 source:c:\users\imanol\documents\code\c++\voxel octree\main.cpp
 	<iostream>
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<shader.h>
-	<camera.h>
-	<Node.h>
+	<include/camera.h>
+	<include/Node.h>
 	<random>
 	<ctime>
+	<include/bunny.h>
+	<include/bone.h>
+	<include/pelbis.h>
+	<include/Octree.h>
+	<include/PointCloud.h>
 
-1491455257 c:\users\imanol\documents\code\c++\voxel octree\node.h
+1491765163 c:\users\imanol\documents\code\c++\voxel octree\node.h
 	<unordered_map>
 	<memory>
 	<glm/glm.hpp>
@@ -17,9 +22,53 @@
 	<iostream>
 	<exception>
 
-1491444736 c:\users\imanol\documents\code\c++\voxel octree\camera.h
+1491702877 c:\users\imanol\documents\code\c++\voxel octree\camera.h
 	<vector>
 	<GL/glew.h>
 	<glm/glm.hpp>
 	<glm/gtc/matrix_transform.hpp>
+
+1491702821 c:\users\imanol\documents\code\c++\voxel octree\bunny.h
+
+1491704183 c:\users\imanol\documents\code\c++\voxel octree\bone.h
+
+1491707460 c:\users\imanol\documents\code\c++\voxel octree\pelbis.h
+
+1491764995 c:\users\imanol\documents\code\c++\voxel octree\octree.h
+	<Node.h>
+
+1491764429 c:\users\imanol\documents\code\c++\voxel octree\pointcloud.h
+	<vector>
+	<glm/glm.hpp>
+	<GL/glew.h>
+	<iostream>
+
+1491702877 c:\users\imanol\documents\code\c++\voxel octree\include\camera.h
+	<vector>
+	<GL/glew.h>
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+
+1491766200 c:\users\imanol\documents\code\c++\voxel octree\include\node.h
+	<unordered_map>
+	<memory>
+	<glm/glm.hpp>
+	<vector>
+	<iostream>
+	<exception>
+
+1491702821 c:\users\imanol\documents\code\c++\voxel octree\include\bunny.h
+
+1491704183 c:\users\imanol\documents\code\c++\voxel octree\include\bone.h
+
+1491707460 c:\users\imanol\documents\code\c++\voxel octree\include\pelbis.h
+
+1491765963 c:\users\imanol\documents\code\c++\voxel octree\include\octree.h
+	<include/Node.h>
+
+1491764429 c:\users\imanol\documents\code\c++\voxel octree\include\pointcloud.h
+	<vector>
+	<glm/glm.hpp>
+	<GL/glew.h>
+	<iostream>
 

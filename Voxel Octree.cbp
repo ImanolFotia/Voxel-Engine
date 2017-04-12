@@ -8,6 +8,7 @@
 		<Build>
 			<Target title="Debug">
 				<Option output="bin/Debug/Voxel Octree" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/Debug" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -34,7 +35,13 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="Node.h" />
+		<Unit filename="include/Node.h" />
+		<Unit filename="include/Octree.h" />
+		<Unit filename="include/PointCloud.h" />
+		<Unit filename="include/bone.h" />
+		<Unit filename="include/bunny.h" />
+		<Unit filename="include/camera.h" />
+		<Unit filename="include/pelbis.h" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />
