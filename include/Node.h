@@ -152,11 +152,17 @@ public:
                 CAABB[i] = CreateBoundingBox(CP[i], Q);
 
                 std::vector<int> indexPassed;
-                for(int j = 0; j < m_PointSet.size(); ++j)
+                for(size_t j = 0; j < m_PointSet.size(); ++j)
                 {
-                    bool passed = false;
-                    passed = isPointInBox(m_PointSet[j], CAABB[i]);
-                    if(passed)
+                    /** Check if point is in current node*/
+                    auto CheckPoint = [](AABB aabb, glm::vec3 point)
+                                            {
+                                                return  (aabb.MIN_X <= point.x && point.x <= aabb.MAX_X) &&
+                                                        (aabb.MIN_Y <= point.y && point.y <= aabb.MAX_Y) &&
+                                                        (aabb.MIN_Z <= point.z && point.z <= aabb.MAX_Z);
+                                            };
+
+                    if(CheckPoint(CAABB[i], m_PointSet[j]))
                     {
                         indexPassed.push_back(j);
                     }
@@ -165,7 +171,7 @@ public:
                 std::vector<glm::vec3> PassedPositions;
                 if(indexPassed.size() > 0)
                 {
-                    for(int k = 0; k < indexPassed.size(); ++k)
+                    for(size_t k = 0; k < indexPassed.size(); ++k)
                         PassedPositions.push_back(m_PointSet.at(indexPassed.at(k)));
                 }
                 if(indexPassed.size() >= 2)
@@ -212,14 +218,6 @@ public:
         return tmpAABB;
     }
 
-    /** Point/Box collision detection*/
-    bool isPointInBox(glm::vec3 point, AABB aabb)
-    {
-        return (aabb.MIN_X <= point.x && point.x <= aabb.MAX_X) &&
-               (aabb.MIN_Y <= point.y && point.y <= aabb.MAX_Y) &&
-               (aabb.MIN_Z <= point.z && point.z <= aabb.MAX_Z);
-    }
-
     bool isSphereinBox(glm::vec3 pos, float s)
     {
         if(glm::length(m_Position - pos) <= s )
@@ -256,14 +254,14 @@ public:
 private:
     std::unordered_map<int, std::shared_ptr<OctreeNode> > m_Childs;
     std::shared_ptr<OctreeNode> m_Parent;
+    glm::vec3 m_Position;
+    float m_HalfSize = 0;
     PointSet m_PointSet;
+    AABB m_BoundingBox;
     int m_Level;
     int m_MaxLevel = 8;
     int numberOfChilds = 0;
 
-    glm::vec3 m_Position;
-    AABB m_BoundingBox;
-    float m_HalfSize;
     bool isLeaf = false;
 };
 

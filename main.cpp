@@ -1,3 +1,7 @@
+#if __cplusplus < 201103L
+  #error This program requires at least a C++11 compliant compiler
+#endif
+
 #include <iostream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -44,7 +48,6 @@ int main()
 
     GLuint shader = crearShader("vertex.glsl", "fragment.glsl");
 
-
     int numPoints = (sizeof(bone) / sizeof(float))/3;
 
     std::shared_ptr<PointCloud> pointCloud = (std::shared_ptr<PointCloud>) new PointCloud(bone, numPoints);
@@ -65,7 +68,8 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glUseProgram(shader);
 
-        //pointCloud->Render(shader, projection, camera.GetViewMatrix());
+        if(0)
+            pointCloud->Render(shader, projection, camera.GetViewMatrix());
 
         SVO->Render(shader, projection, camera.GetViewMatrix());
 

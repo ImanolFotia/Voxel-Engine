@@ -29,7 +29,7 @@ private:
 
     void getCenter()
     {
-        for(int i = 0; i < m_PointSet.size(); ++i)
+        for(size_t i = 0; i < m_PointSet.size(); ++i)
         {
             m_Position += m_PointSet[i];
         }
@@ -42,23 +42,19 @@ private:
         float x = 0, y = 0, z = 0;
         float mx = 0, my = 0, mz = 0;
 
-        for(int i = 0; i < m_PointSet.size(); ++i)
+        for(size_t i = 0; i < m_PointSet.size(); ++i)
         {
             float tmpx = m_PointSet[i].x;
-            if(tmpx > x)
-                x = tmpx;
-            if(tmpx < mx)
-                mx = tmpx;
+            if(tmpx > x) x = tmpx;
+            if(tmpx < mx) mx = tmpx;
+
             float tmpy = m_PointSet[i].y;
-            if(tmpy > y)
-                y = tmpy;
-            if(tmpy < my)
-                my = tmpy;
+            if(tmpy > y) y = tmpy;
+            if(tmpy < my) my = tmpy;
+
             float tmpz = m_PointSet[i].z;
-            if(tmpz > z)
-                z = tmpz;
-            if(tmpz < mz)
-                mz = tmpz;
+            if(tmpz > z) z = tmpz;
+            if(tmpz < mz) mz = tmpz;
         }
 
         float scx = glm::abs(x) + glm::abs(mx);

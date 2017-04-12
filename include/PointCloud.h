@@ -41,9 +41,9 @@ public:
 
         glBindVertexArray(VAO);
 
-        for(int i = 0; i < m_PointPositions.size(); i++)
+        for(auto i: m_PointPositions)
         {
-            glm::mat4 model = glm::translate(glm::mat4(), m_PointPositions[i]);
+            glm::mat4 model = glm::translate(glm::mat4(), i);
             glm::mat4 MVP = projection * view * model;
             glUniformMatrix4fv(glGetUniformLocation(shader, "MVP"), 1, GL_FALSE, &MVP[0][0]);
             glUniform1i(glGetUniformLocation(shader, "isQuad"), 0);
@@ -54,7 +54,6 @@ public:
         glBindVertexArray(0);
 
         glUseProgram(0);
-
 
     }
 
