@@ -49,13 +49,14 @@
 	<glm/glm.hpp>
 	<glm/gtc/matrix_transform.hpp>
 
-1492022742 c:\users\imanol\documents\code\c++\voxel octree\include\node.h
+1492023854 c:\users\imanol\documents\code\c++\voxel octree\include\node.h
 	<unordered_map>
 	<memory>
 	<glm/glm.hpp>
 	<vector>
 	<iostream>
 	<exception>
+	<algorithm>
 
 1491702821 c:\users\imanol\documents\code\c++\voxel octree\include\bunny.h
 

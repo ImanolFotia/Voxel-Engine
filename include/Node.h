@@ -7,6 +7,7 @@
 #include <vector>
 #include <iostream>
 #include <exception>
+#include <algorithm>
 
 typedef std::vector<glm::vec3> PointSet;
 static int cycles = 0;
@@ -169,12 +170,16 @@ public:
                 }
 
                 std::vector<glm::vec3> PassedPositions;
+
                 if(indexPassed.size() > 0)
                 {
                     for(size_t k = 0; k < indexPassed.size(); ++k)
                         PassedPositions.push_back(m_PointSet.at(indexPassed.at(k)));
                 }
-                if(indexPassed.size() >= 2)
+
+                auto greater_or_equal_to_2 = [](int x) -> int {return x >= 2;};
+
+                if(greater_or_equal_to_2(indexPassed.size()))
                 {
                     m_Childs[i] = (std::shared_ptr<OctreeNode>) new OctreeNode((std::shared_ptr<OctreeNode>)this, CP[i], Q, PassedPositions, m_Level+1);
                     numberOfChilds++;
