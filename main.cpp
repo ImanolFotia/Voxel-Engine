@@ -1,5 +1,5 @@
 #if __cplusplus < 201103L
-  #error This program requires at least a C++11 compliant compiler
+#error This program requires at least a C++11 compliant compiler
 #endif
 
 #include <iostream>
@@ -34,8 +34,7 @@ const float width = 1280, height = 720;
 
 GLFWwindow* window;
 
-int main()
-{
+int main() {
     glfwInit();
     window = glfwCreateWindow(width, height, "Sparse Voxel Octree", 0, nullptr);
     glfwMakeContextCurrent(window);
@@ -46,17 +45,18 @@ int main()
     glLineWidth(3.0);
     glPointSize(10.0);
 
-    GLuint shader = crearShader("vertex.glsl", "fragment.glsl");
+    GLuint shader = crearShader( "vertex.glsl", "fragment.glsl" );
 
     int numPoints = (sizeof(bone) / sizeof(float))/3;
 
-    std::shared_ptr<PointCloud> pointCloud = (std::shared_ptr<PointCloud>) new PointCloud(bone, numPoints);
-    std::shared_ptr<Octree> SVO = (std::shared_ptr<Octree>) new Octree(pointCloud->getPointData());
+    std::shared_ptr<PointCloud> pointCloud = ( std::shared_ptr<PointCloud> ) new PointCloud( bone, numPoints );
 
-    glm::mat4 projection = glm::perspective(75.0f, width/height, 0.1f, 1000.0f);
+    std::shared_ptr<Octree> SVO = ( std::shared_ptr<Octree> ) new Octree( pointCloud->getPointData() );
 
-    while(!glfwWindowShouldClose(window))
-    {
+    glm::mat4 projection = glm::perspective( 75.0f, width/height, 0.1f, 1000.0f );
+
+    while( !glfwWindowShouldClose(window) ) {
+
         GLfloat currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
@@ -66,12 +66,14 @@ int main()
         glfwPollEvents();
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         glUseProgram(shader);
 
-        if(0)
+        if( false ) {
             pointCloud->Render(shader, projection, camera.GetViewMatrix());
+        }
 
-        SVO->Render(shader, projection, camera.GetViewMatrix());
+        SVO->Render( shader, projection, camera.GetViewMatrix() );
 
         glUseProgram(0);
 
@@ -83,8 +85,7 @@ int main()
 }
 
 // Moves/alters the camera positions based on user input
-void Do_Movement()
-{
+void Do_Movement() {
     // Camera controls
     if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera.ProcessKeyboard(FORWARD, deltaTime);
@@ -99,13 +100,11 @@ void Do_Movement()
 }
 
 // Is called whenever a key is pressed/released via GLFW
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
-{
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
     //cout << key << endl;
     if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
-    if (key >= 0 && key < 1024)
-    {
+    if (key >= 0 && key < 1024) {
         if(action == GLFW_PRESS)
             keys[key] = true;
         else if(action == GLFW_RELEASE)
@@ -113,12 +112,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
 }
 
-void mouse_callback()
-{
+void mouse_callback() {
     double xpos, ypos;
     glfwGetCursorPos(window, &xpos, &ypos);
-    if(firstMouse)
-    {
+    if(firstMouse) {
         lastX = xpos;
         lastY = ypos;
         firstMouse = false;
@@ -135,7 +132,6 @@ void mouse_callback()
 }
 
 
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
     camera.ProcessMouseScroll(yoffset);
 }
