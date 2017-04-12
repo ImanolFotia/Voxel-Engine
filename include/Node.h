@@ -155,7 +155,7 @@ public:
                 for(size_t j = 0; j < m_PointSet.size(); ++j)
                 {
                     /** Check if point is in current node*/
-                    auto CheckPoint = [](AABB aabb, glm::vec3 point)
+                    auto CheckPoint = [](AABB aabb, glm::vec3 point) -> bool
                                             {
                                                 return  (aabb.MIN_X <= point.x && point.x <= aabb.MAX_X) &&
                                                         (aabb.MIN_Y <= point.y && point.y <= aabb.MAX_Y) &&
