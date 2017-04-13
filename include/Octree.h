@@ -11,6 +11,13 @@ public:
         this->m_RootNode = (std::shared_ptr<OctreeNode>) new OctreeNode(nullptr, this->m_Position, this->m_Scale, m_PointSet, 0);
     }
 
+    Octree(PointSet pointSet, PointSet normals) : m_PointSet(pointSet), m_Normals(normals) {
+        this->getCenter();
+        this->getSize();
+
+        this->m_RootNode = (std::shared_ptr<OctreeNode>) new OctreeNode(nullptr, this->m_Position, this->m_Scale, m_PointSet, m_Normals, 0);
+    }
+
     ~Octree() {}
 
     void Render(GLuint shader, glm::mat4 projection, glm::mat4 view) {
@@ -38,27 +45,27 @@ private:
         for(size_t i = 0; i < m_PointSet.size(); ++i) {
             float tmpx = m_PointSet[i].x;
             if( tmpx > x ) {
-                x = tmpx
-            };
+                x = tmpx;
+            }
             if( tmpx < mx ) {
-                mx = tmpx
-            };
+                mx = tmpx;
+            }
 
             float tmpy = m_PointSet[i].y;
             if( tmpy > y ) {
-                y = tmpy
-            };
+                y = tmpy;
+            }
             if( tmpy < my ) {
-                my = tmpy
-            };
+                my = tmpy;
+            }
 
             float tmpz = m_PointSet[i].z;
             if( tmpz > z ) {
-                z = tmpz
-            };
+                z = tmpz;
+            }
             if( tmpz < mz ) {
-                mz = tmpz
-            };
+                mz = tmpz;
+            }
         }
 
         float scx = glm::abs(x) + glm::abs(mx);
@@ -71,6 +78,7 @@ private:
 private:
     std::shared_ptr<OctreeNode> m_RootNode;
     PointSet m_PointSet;
+    PointSet m_Normals;
 
     glm::vec3 m_Position;
 

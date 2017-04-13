@@ -11,17 +11,21 @@
 				<Option working_dir="bin/Debug" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
-				<Option compiler="gnu_gcc_64" />
+				<Option compiler="gcc" />
 				<Option projectCompilerOptionsRelation="2" />
 				<Compiler>
-					<Add option="-std=c++14" />
 					<Add option="-std=c++11" />
 					<Add option="-g" />
-					<Add directory="../Voxel Octree" />
+					<Add directory="../Octree-master" />
+					<Add directory="D:/Epsilon/Epsilon Engine/deppend/glew-2.0.0/include" />
+					<Add directory="D:/Epsilon/Epsilon Engine/deppend/glfw-3.1.1/include" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add option="-std=c++1y" />
-				</ResourceCompiler>
+				<Linker>
+					<Add option="-lopengl32" />
+					<Add option="-lgdi32" />
+					<Add library="D:\Epsilon\Epsilon Engine\deppend\glew-2.0.0\lib\libglew32.dll.a" />
+					<Add library="D:\Epsilon\Epsilon Engine\deppend\glfw-3.1.1\build\src\glfw3dll.a" />
+				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="bin/Release/Voxel Octree" prefix_auto="1" extension_auto="1" />
@@ -40,13 +44,13 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="include/Model.h" />
 		<Unit filename="include/Node.h" />
 		<Unit filename="include/Octree.h" />
 		<Unit filename="include/PointCloud.h" />
-		<Unit filename="include/bone.h" />
-		<Unit filename="include/bunny.h" />
 		<Unit filename="include/camera.h" />
-		<Unit filename="include/pelbis.h" />
+		<Unit filename="include/emlFormat.h" />
+		<Unit filename="include/shader.h" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />

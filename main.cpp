@@ -5,17 +5,14 @@
 #include <iostream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <shader.h>
 #include <include/camera.h>
+#include <include/shader.h>
 #include <include/Node.h>
 #include <random>
 #include <ctime>
-#include <include/bunny.h>
-#include <include/bone.h>
-#include <include/pelbis.h>
 #include <include/Octree.h>
 #include <include/PointCloud.h>
-
+#include <include/Model.h>
 using namespace std;
 
 void mouse_callback();
@@ -34,6 +31,8 @@ const float width = 1280, height = 720;
 
 GLFWwindow* window;
 
+
+
 int main() {
     glfwInit();
     window = glfwCreateWindow(width, height, "Sparse Voxel Octree", 0, nullptr);
@@ -44,16 +43,22 @@ int main() {
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glLineWidth(3.0);
     glPointSize(10.0);
+    //glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
 
     GLuint shader = crearShader( "vertex.glsl", "fragment.glsl" );
 
-    int numPoints = (sizeof(bone) / sizeof(float))/3;
+    //int numPoints = (sizeof(bone) / sizeof(float))/3;
 
-    std::shared_ptr<PointCloud> pointCloud = ( std::shared_ptr<PointCloud> ) new PointCloud( bone, numPoints );
+    std::shared_ptr<Model> model = (std::shared_ptr<Model>) new Model("bunny.eml");
 
-    std::shared_ptr<Octree> SVO = ( std::shared_ptr<Octree> ) new Octree( pointCloud->getPointData() );
+    std::shared_ptr<PointCloud> pointCloud = ( std::shared_ptr<PointCloud> ) new PointCloud( model->getVertices(), model->getNormals());
+
+    std::shared_ptr<Octree> SVO = ( std::shared_ptr<Octree> ) new Octree( pointCloud->getPointsPositions(), pointCloud->getPointsNormals() );
 
     glm::mat4 projection = glm::perspective( 75.0f, width/height, 0.1f, 1000.0f );
+
 
     while( !glfwWindowShouldClose(window) ) {
 
@@ -64,6 +69,7 @@ int main() {
         Do_Movement();
 
         glfwPollEvents();
+        camPos = camera.Position;
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

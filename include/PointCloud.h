@@ -13,6 +13,11 @@ public:
 
     }
 
+    PointCloud(std::vector<glm::vec3> positions, std::vector<glm::vec3> normals) : m_PointPositions(positions), m_PointNormals(normals)
+    {
+
+    }
+
     PointCloud(float rawPositions[], int numP)
     {
         for(int i = 0; i < numP; ++i)
@@ -57,9 +62,14 @@ public:
 
     }
 
-    std::vector<glm::vec3> getPointData()
+    std::vector<glm::vec3> getPointsPositions()
     {
         return m_PointPositions;
+    }
+
+    std::vector<glm::vec3> getPointsNormals()
+    {
+        return m_PointNormals;
     }
 
 private:
@@ -67,6 +77,7 @@ private:
     bool firstTime = true;
     GLuint VAO, VBO;
     std::vector<glm::vec3> m_PointPositions;
+    std::vector<glm::vec3> m_PointNormals;
     glm::vec3 point = glm::vec3(0,0,0);
 
 };
