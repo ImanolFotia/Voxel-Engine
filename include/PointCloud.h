@@ -20,6 +20,7 @@ public:
 
     PointCloud(float rawPositions[], int numP)
     {
+        #pragma omp parallel for simd
         for(int i = 0; i < numP; ++i)
             m_PointPositions.push_back(glm::vec3(rawPositions[i], rawPositions[i+1], rawPositions[i+2]));
     }
@@ -46,6 +47,9 @@ public:
 
         glBindVertexArray(VAO);
 
+        #pragma omp parellel for simd
+        {
+        #pragma omp single
         for(auto i: m_PointPositions)
         {
             glm::mat4 model = glm::translate(glm::mat4(), i);
@@ -54,6 +58,7 @@ public:
             glUniform1i(glGetUniformLocation(shader, "isQuad"), 0);
 
             glDrawArrays(GL_POINTS, 0, 1);
+        }
         }
 
         glBindVertexArray(0);

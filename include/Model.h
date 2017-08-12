@@ -64,7 +64,7 @@ public:
         }
 
         for( auto i = 0; i < numvertices; ++i ) {
-            m_Vertices.push_back(glm::vec3(l_vertices[i].position.x, -l_vertices[i].position.y, l_vertices[i].position.z));
+            m_Vertices.push_back(glm::vec3(l_vertices[i].position.x, l_vertices[i].position.y, l_vertices[i].position.z));
             m_Normals.push_back(glm::vec3(l_vertices[i].normal.x, l_vertices[i].normal.y, l_vertices[i].normal.z));
         }
 

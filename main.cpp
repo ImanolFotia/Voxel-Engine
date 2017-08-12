@@ -13,6 +13,8 @@
 #include <include/Octree.h>
 #include <include/PointCloud.h>
 #include <include/Model.h>
+#include <include/gui.h>
+
 using namespace std;
 
 void mouse_callback();
@@ -40,16 +42,16 @@ int main() {
 
     glewExperimental = true;
     glewInit();
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    glLineWidth(3.0);
+    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glLineWidth(2.0);
     glPointSize(10.0);
-    //glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_ONE);
 
     GLuint shader = crearShader( "vertex.glsl", "fragment.glsl" );
 
-    //int numPoints = (sizeof(bone) / sizeof(float))/3;
+    gui::initGUI(width, height, window);
 
     std::shared_ptr<Model> model = (std::shared_ptr<Model>) new Model("bunny.eml");
 
@@ -57,10 +59,12 @@ int main() {
 
     std::shared_ptr<Octree> SVO = ( std::shared_ptr<Octree> ) new Octree( pointCloud->getPointsPositions(), pointCloud->getPointsNormals() );
 
-    glm::mat4 projection = glm::perspective( 75.0f, width/height, 0.1f, 1000.0f );
+    glm::mat4 projection = glm::perspective( glm::radians(75.0f), width/height, 0.1f, 3000.0f );
 
 
-    while( !glfwWindowShouldClose(window) ) {
+    TwSetCurrentWindow(0);
+
+    while( gui::running ) {
 
         GLfloat currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
@@ -75,6 +79,17 @@ int main() {
 
         glUseProgram(shader);
 
+        if(gui::distanceFields){
+           glEnable(GL_BLEND);
+
+            glDisable(GL_DEPTH_TEST);
+        }
+        else{
+           glDisable(GL_BLEND);
+            glEnable(GL_DEPTH_TEST);
+        }
+
+
         if( false ) {
             pointCloud->Render(shader, projection, camera.GetViewMatrix());
         }
@@ -83,10 +98,16 @@ int main() {
 
         glUseProgram(0);
 
+        TwDraw();
+
         glfwSwapBuffers(window);
     }
 
+    SVO->Destroy();
+
+    TwTerminate();
     glfwTerminate();
+
     return 0;
 }
 
@@ -97,9 +118,9 @@ void Do_Movement() {
         camera.ProcessKeyboard(FORWARD, deltaTime);
     if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         camera.ProcessKeyboard(BACKWARD, deltaTime);
-    if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.ProcessKeyboard(LEFT, deltaTime);
     if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera.ProcessKeyboard(LEFT, deltaTime);
+    if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
 
     mouse_callback();
@@ -134,7 +155,7 @@ void mouse_callback() {
     lastY = ypos;
 
     //if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
-    camera.ProcessMouseMovement(-xoffset, -yoffset);
+    camera.ProcessMouseMovement(xoffset, yoffset, window);
 }
 
 

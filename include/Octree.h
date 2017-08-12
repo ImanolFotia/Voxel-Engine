@@ -8,17 +8,18 @@ public:
         this->getCenter();
         this->getSize();
 
-        this->m_RootNode = (std::shared_ptr<OctreeNode>) new OctreeNode(nullptr, this->m_Position, this->m_Scale, m_PointSet, 0);
+        this->m_RootNode = (std::shared_ptr<OctreeNode>) new OctreeNode(this->m_Position, this->m_Scale, m_PointSet, 0);
     }
 
     Octree(PointSet pointSet, PointSet normals) : m_PointSet(pointSet), m_Normals(normals) {
         this->getCenter();
         this->getSize();
 
-        this->m_RootNode = (std::shared_ptr<OctreeNode>) new OctreeNode(nullptr, this->m_Position, this->m_Scale, m_PointSet, m_Normals, 0);
+        this->m_RootNode = (std::shared_ptr<OctreeNode>) new OctreeNode(this->m_Position, this->m_Scale, m_PointSet, m_Normals, 0);
     }
 
-    ~Octree() {}
+    ~Octree() {
+        OctreeNode* tmp = m_RootNode.get();}
 
     void Render(GLuint shader, glm::mat4 projection, glm::mat4 view) {
         m_RootNode->RenderNode(shader, projection, view);
@@ -28,6 +29,10 @@ public:
         ///TODO
     }
 
+    void Destroy()
+    {
+        m_RootNode->Destroy(m_RootNode);
+    }
 private:
 
     void getCenter() {
@@ -41,7 +46,9 @@ private:
     void getSize() {
         float x = 0, y = 0, z = 0;
         float mx = 0, my = 0, mz = 0;
-
+        #pragma omp parellel for simd
+        {
+        #pragma omp simd
         for(size_t i = 0; i < m_PointSet.size(); ++i) {
             float tmpx = m_PointSet[i].x;
             if( tmpx > x ) {
@@ -67,12 +74,13 @@ private:
                 mz = tmpz;
             }
         }
+        }
 
-        float scx = glm::abs(x) + glm::abs(mx);
-        float scy = glm::abs(y) + glm::abs(my);
-        float scz = glm::abs(z) + glm::abs(mz);
+        float scx = glm::length(x - mx);
+        float scy = glm::length(y - my);
+        float scz = glm::length(z - mz);
 
-        m_Scale = glm::max(scx, glm::max(scy, scz));
+        m_Scale = glm::max(scx, glm::max(scy, scz))/1.5;
     }
 
 private:

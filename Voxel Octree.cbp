@@ -14,17 +14,23 @@
 				<Option compiler="gcc" />
 				<Option projectCompilerOptionsRelation="2" />
 				<Compiler>
+					<Add option="-march=atom" />
+					<Add option="-O3" />
 					<Add option="-std=c++11" />
-					<Add option="-g" />
-					<Add directory="../Octree-master" />
-					<Add directory="D:/Epsilon/Epsilon Engine/deppend/glew-2.0.0/include" />
-					<Add directory="D:/Epsilon/Epsilon Engine/deppend/glfw-3.1.1/include" />
+					<Add option="-fopenmp" />
+					<Add option="-lgomp" />
+					<Add directory="../Voxel Octree" />
+					<Add directory="../common-libs/glew-2.0.0/include" />
+					<Add directory="../common-libs/glfw-3.1.1/include" />
+					<Add directory="../common-libs/AntTweakBar/include" />
 				</Compiler>
 				<Linker>
 					<Add option="-lopengl32" />
 					<Add option="-lgdi32" />
-					<Add library="D:\Epsilon\Epsilon Engine\deppend\glew-2.0.0\lib\libglew32.dll.a" />
-					<Add library="D:\Epsilon\Epsilon Engine\deppend\glfw-3.1.1\build\src\glfw3dll.a" />
+					<Add option="-fopenmp" />
+					<Add library="../common-libs/glew/lib/libglew32.dll.a" />
+					<Add library="../common-libs/glfw-3.1.1/build/src/glfw3dll.a" />
+					<Add library="../common-libs/AntTweakBar/lib/AntTweakBar.lib" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -50,6 +56,7 @@
 		<Unit filename="include/PointCloud.h" />
 		<Unit filename="include/camera.h" />
 		<Unit filename="include/emlFormat.h" />
+		<Unit filename="include/gui.h" />
 		<Unit filename="include/shader.h" />
 		<Unit filename="main.cpp" />
 		<Extensions>

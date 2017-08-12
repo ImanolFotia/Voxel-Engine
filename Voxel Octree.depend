@@ -1,18 +1,17 @@
 # depslib dependency file v1.0
-1492022658 source:c:\users\imanol\documents\code\c++\voxel octree\main.cpp
+1497242856 source:c:\users\imanol\documents\code\c++\voxel octree\main.cpp
 	<iostream>
 	<GL/glew.h>
 	<GLFW/glfw3.h>
-	<shader.h>
 	<include/camera.h>
+	<include/shader.h>
 	<include/Node.h>
 	<random>
 	<ctime>
-	<include/bunny.h>
-	<include/bone.h>
-	<include/pelbis.h>
 	<include/Octree.h>
 	<include/PointCloud.h>
+	<include/Model.h>
+	<include/gui.h>
 
 1491765163 c:\users\imanol\documents\code\c++\voxel octree\node.h
 	<unordered_map>
@@ -43,13 +42,13 @@
 	<GL/glew.h>
 	<iostream>
 
-1491702877 c:\users\imanol\documents\code\c++\voxel octree\include\camera.h
+1492551770 c:\users\imanol\documents\code\c++\voxel octree\include\camera.h
 	<vector>
 	<GL/glew.h>
 	<glm/glm.hpp>
 	<glm/gtc/matrix_transform.hpp>
 
-1492026960 c:\users\imanol\documents\code\c++\voxel octree\include\node.h
+1499195061 c:\users\imanol\documents\code\c++\voxel octree\include\node.h
 	<unordered_map>
 	<memory>
 	<glm/glm.hpp>
@@ -57,6 +56,9 @@
 	<iostream>
 	<exception>
 	<algorithm>
+	<include/Model.h>
+	<cstdio>
+	<include/gui.h>
 
 1491702821 c:\users\imanol\documents\code\c++\voxel octree\include\bunny.h
 
@@ -64,10 +66,10 @@
 
 1491707460 c:\users\imanol\documents\code\c++\voxel octree\include\pelbis.h
 
-1492022000 c:\users\imanol\documents\code\c++\voxel octree\include\octree.h
+1497242707 c:\users\imanol\documents\code\c++\voxel octree\include\octree.h
 	<include/Node.h>
 
-1492021019 c:\users\imanol\documents\code\c++\voxel octree\include\pointcloud.h
+1497242760 c:\users\imanol\documents\code\c++\voxel octree\include\pointcloud.h
 	<vector>
 	<glm/glm.hpp>
 	<GL/glew.h>
@@ -161,4 +163,57 @@
 
 1492033831 c:\users\imanol\downloads\octree-master\octree-master\include\emlformat.h
 	<string>
+
+1469335416 c:\users\imanol\documents\code\c++\common-libs\glew-2.0.0\include\gl\glew.h
+	<stddef.h>
+	<inttypes.h>
+	<stdint.h>
+	<inttypes.h>
+	<Availability.h>
+	<OpenGL/glu.h>
+	<GL/glu.h>
+
+1430073372 c:\users\imanol\documents\code\c++\common-libs\glfw-3.1.1\include\glfw\glfw3.h
+	<stddef.h>
+	<OpenGL/gl3.h>
+	<OpenGL/gl3ext.h>
+	<OpenGL/gl.h>
+	<OpenGL/glu.h>
+	<GL/glcorearb.h>
+	<GLES/gl.h>
+	<GLES/glext.h>
+	<GLES2/gl2.h>
+	<GLES2/gl2ext.h>
+	<GLES3/gl3.h>
+	<GLES3/gl2ext.h>
+	<GLES3/gl31.h>
+	<GLES3/gl2ext.h>
+	<GL/gl.h>
+	<GL/glext.h>
+	<GL/glu.h>
+
+1492107187 c:\users\imanol\documents\code\c++\voxel octree\include\shader.h
+	<iostream>
+	<string>
+	<fstream>
+	<sstream>
+	<GL/glew.h>
+
+1492148050 c:\users\imanol\documents\code\c++\voxel octree\include\model.h
+	<include/emlFormat.h>
+	<vector>
+	<iostream>
+	<fstream>
+	<glm/glm.hpp>
+
+1492107187 c:\users\imanol\documents\code\c++\voxel octree\include\emlformat.h
+	<string>
+
+1363811346 c:\users\imanol\documents\code\c++\common-libs\anttweakbar\include\anttweakbar.h
+	<stddef.h>
+	<string>
+	<string>
+
+1492144986 c:\users\imanol\documents\code\c++\voxel octree\include\gui.h
+	<AntTweakBar.h>
 

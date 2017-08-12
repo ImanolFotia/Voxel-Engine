@@ -21,7 +21,7 @@ enum Camera_Movement {
 // Default camera values
 const GLfloat YAW        = -90.0f;
 const GLfloat PITCH      =  0.0f;
-const GLfloat SPEED      =  5.0f;
+const GLfloat SPEED      =  15.0f;
 const GLfloat SENSITIVTY =  0.25f;
 const GLfloat ZOOM       =  75.0f;
 
@@ -84,8 +84,10 @@ public:
     }
 
     // Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
-    void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch = true)
+    void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLFWwindow* window, GLboolean constrainPitch = true)
     {
+
+        if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS){
         xoffset *= this->MouseSensitivity;
         yoffset *= this->MouseSensitivity;
 
@@ -102,7 +104,8 @@ public:
         }
 
         // Update Front, Right and Up Vectors using the updated Eular angles
-        this->updateCameraVectors();
+            this->updateCameraVectors();
+        }
     }
 
     // Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis

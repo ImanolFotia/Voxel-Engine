@@ -9,6 +9,8 @@
 #include <exception>
 #include <algorithm>
 #include <include/Model.h>
+#include <cstdio>
+#include <include/gui.h>
 typedef std::vector<glm::vec3> PointSet;
 static int cycles = 0;
 static int leafs = 0;
@@ -73,8 +75,11 @@ static void renderCubeWireframe() {
     glBindVertexArray(0);
 }
 
+bool csfirst = true;
+
+GLuint csVAO, csVBO;
 static void renderCubeSolid() {
-    if(first) {
+    if(csfirst) {
         GLfloat cubeVertices[] = {
             // Positions
             -1.0f,  1.0f, -1.0f,
@@ -120,17 +125,17 @@ static void renderCubeSolid() {
             1.0f, -1.0f,  1.0f
         };
 
-        glGenVertexArrays(1, &cVAO);
-        glGenBuffers(1, &cVBO);
-        glBindVertexArray(cVAO);
-        glBindBuffer(GL_ARRAY_BUFFER, cVBO);
+        glGenVertexArrays(1, &csVAO);
+        glGenBuffers(1, &csVBO);
+        glBindVertexArray(csVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, csVBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
         glBindVertexArray(0);
-        first = false;
+        csfirst = false;
     }
-    glBindVertexArray(cVAO);
+    glBindVertexArray(csVAO);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
 }
@@ -140,10 +145,11 @@ int numVerts, numIndices;
 
 std::vector<glm::vec3> verts;
 std::vector<unsigned int> indices;
-GLuint EBO;
-void renderSphereSolid()
-{
-    if(first) {
+GLuint ssEBO;
+GLuint ssVAO, ssVBO;
+bool ssfirst = true;
+void renderSphereSolid() {
+    if(ssfirst) {
         model = (std::shared_ptr<Model>) new Model("esfera.eml");
         std::vector<glm::vec3> verts = model->getVertices();
         std::vector<unsigned int> indices = model->getIndices();
@@ -151,22 +157,22 @@ void renderSphereSolid()
         std::cout << numVerts << std::endl;
         numIndices = indices.size();
         std::cout << numIndices << std::endl;
-        glGenVertexArrays(1, &cVAO);
-        glGenBuffers(1, &cVBO);
-        glGenBuffers(1, &EBO);
-        glBindVertexArray(cVAO);
-        glBindBuffer(GL_ARRAY_BUFFER, cVBO);
+        glGenVertexArrays(1, &ssVAO);
+        glGenBuffers(1, &ssVBO);
+        glGenBuffers(1, &ssEBO);
+        glBindVertexArray(ssVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, ssVBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * numVerts, &verts[0], GL_STATIC_DRAW);
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ssEBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
 
         glBindVertexArray(0);
-        first = false;
+        ssfirst = false;
     }
-    glBindVertexArray(cVAO);
+    glBindVertexArray(ssVAO);
     glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
@@ -184,31 +190,43 @@ public:
     }
 
     /** Constructor for an octree given a set of points*/
-    OctreeNode(const std::shared_ptr<OctreeNode> parent, const glm::vec3 pos, const float s, const PointSet ps, const int lvl)
-        : m_Parent(parent), m_Position(pos), m_HalfSize(s), m_PointSet(ps), m_Level(lvl) {
+    OctreeNode(const glm::vec3 pos, const float s, const PointSet ps, const int lvl)
+        : m_Position(pos), m_HalfSize(s), m_PointSet(ps), m_Level(lvl) {
 
         m_BoundingBox = this->CreateBoundingBox(pos, s);
         BuildTree();
     }
 
     /** Constructor for an octree given a set of points*/
-    OctreeNode(const std::shared_ptr<OctreeNode> parent, const glm::vec3 pos, const float s, const PointSet ps, const PointSet nor, const int lvl)
-        : m_Parent(parent), m_Position(pos), m_HalfSize(s), m_PointSet(ps), m_Normals(nor), m_Level(lvl) {
+    OctreeNode(const glm::vec3 pos, const float s, const PointSet ps, const PointSet nor, const int lvl)
+        : m_Position(pos), m_HalfSize(s), m_PointSet(ps), m_Normals(nor), m_Level(lvl) {
 
         m_BoundingBox = this->CreateBoundingBox(pos, s);
         BuildTree();
     }
 
     /** Constructor for an octree given a set of points, plus an AABB*/
-    OctreeNode(const std::shared_ptr<OctreeNode> parent,const glm::vec3 pos,const float s,const PointSet ps,const AABB aabb, int lvl = 0)
-        : m_Parent(parent), m_Position(pos), m_HalfSize(s), m_PointSet(ps), m_BoundingBox(aabb), m_Level(lvl) {
+    OctreeNode(const glm::vec3 pos,const float s,const PointSet ps,const AABB aabb, int lvl = 0)
+        : m_Position(pos), m_HalfSize(s), m_PointSet(ps), m_BoundingBox(aabb), m_Level(lvl) {
 
         BuildTree();
     }
 
     /** Destructor*/
+
     ~OctreeNode() {
         ///Destructor
+    }
+
+    void Destroy(std::shared_ptr<OctreeNode> node) {
+
+        for(std::unordered_map<int, std::shared_ptr<OctreeNode> >::iterator itr = node->m_Childs.begin(); itr != node->m_Childs.end(); itr++) {
+            node->Destroy(itr->second);
+        }
+
+        node.reset();
+        OctreeNode* tmpNode = node.get();
+        tmpNode = nullptr;
     }
 
     /** This function will spawn more nodes based on the number of points in the current node*/
@@ -217,11 +235,9 @@ public:
         glm::vec3 p = m_Position;
         AABB CAABB[8];
         float Q = m_HalfSize/2.0;
-        std::cout << (m_Parent == nullptr ? "Root Node" : "") << std::endl;
-        std::cout << "Number of Points for Node " << m_Level << ": " << m_PointSet.size() << std::endl;
-        std::cout << "Number of Normals for Node " << m_Level << ": " << m_Normals.size() << std::endl;
+        //std::cout << (m_Level == 0 ? "Root Node" : "") << std::endl;
         if(m_PointSet.size() <= 0) {
-            std::cout << "Empty Point Set" << std::endl;
+            //std::cout << "Empty Point Set" << std::endl;
             return;
         }
 
@@ -240,6 +256,7 @@ public:
             CP[DOWN_BOTTOM_RIGHT]   = glm::vec3(p.x + Q, p.y - Q, p.z - Q);
             CP[DOWN_BOTTOM_LEFT]    = glm::vec3(p.x + Q, p.y - Q, p.z + Q);
 
+            #pragma omp parellel for simd
             for(int i = 0; i < 8; ++i) {
                 CAABB[i] = CreateBoundingBox(CP[i], Q);
 
@@ -247,16 +264,19 @@ public:
                 std::vector<glm::vec3> PassedNormals;
                 std::vector<glm::vec3> PassedPositions;
 
+                #pragma omp single
                 for(size_t j = 0; j < m_PointSet.size(); ++j) {
 
                     /** Check if point is in current node*/
-                    auto CheckPoint = [](AABB aabb, glm::vec3 point) -> bool {
+                    auto CheckPointinBox = [](AABB aabb, glm::vec3 point) -> bool {
 
                         return  (aabb.MIN_X <= point.x && point.x <= aabb.MAX_X) &&
                         (aabb.MIN_Y <= point.y && point.y <= aabb.MAX_Y) &&
                         (aabb.MIN_Z <= point.z && point.z <= aabb.MAX_Z);
 
                     };
+
+                    auto CheckTriangleinBox = [&](){}
 
                     if(CheckPoint(CAABB[i], m_PointSet[j])) {
                         indexPassed++;
@@ -265,38 +285,33 @@ public:
                     }
                 }
 
-
-
                 auto greater_or_equal_to_1 = [](const int x) -> bool {return x >= 1;};
 
-                if(greater_or_equal_to_1(indexPassed)) {
-                    if(m_Level+1 >= m_MaxLevel) {
-                        std::cout << "Reached Max Level" << std::endl;
-                        this->isLeaf = true;
-                        leafs++;
-                        std::cout << "Leafs: " << leafs << std::endl;
-                    }
-                    else {
-                        m_Childs[i] = (std::shared_ptr<OctreeNode>) new OctreeNode((std::shared_ptr<OctreeNode>)this, CP[i], Q, PassedPositions, PassedNormals, m_Level+1);
-                        numberOfChilds++;
-                        cycles++;
-                        std::cout << "Childs: " << cycles << std::endl;
-                    }
+                if(greater_or_equal_to_1(indexPassed) && m_Level+1 < m_MaxLevel) {
+
+                    m_Childs[i] = (std::shared_ptr<OctreeNode>) new OctreeNode(CP[i], Q, PassedPositions, PassedNormals, m_Level+1);
+                    numberOfChilds++;
+                    cycles++;
+                    printf("Childs: %d\r", cycles);
+                    //std::flush(std::cout);
                 }
             }
 
+
+            if(numberOfChilds <= 0 && !this->isLeaf) {
+                isLeaf = true;
+                leafs++;
+                // std::cout << "Leafs: " << leafs << "\n" << "\r";
+            }
+            #pragma omp parellel for simd
+            {
+            #pragma omp single
             for(auto i: m_Normals) {
                 m_Normal += i;
             }
-
+            }
             m_Normal /= m_Normals.size();
             m_Normal = glm::normalize(m_Normal);
-
-            if(numberOfChilds <= 0) {
-                isLeaf = true;
-                leafs++;
-                std::cout << "Leafs: " << leafs << std::endl;
-            }
         }
 
         catch(std::exception& e) {
@@ -309,7 +324,6 @@ public:
         }
 
     }
-
 
     /** Defines a bounding box for the current node*/
     AABB CreateBoundingBox(const glm::vec3 pos,const float s) {
@@ -336,8 +350,11 @@ public:
 
     /** Recursively render each node and it's children*/
     void RenderNode(const GLuint shader, const glm::mat4 projection, const glm::mat4 view) {
+        int guilevel = gui::Level;
+        if(guilevel == -1)
+            guilevel = m_Level;
 
-        if(1) {
+        if((!gui::leafsOnly || isLeaf) && guilevel >= m_Level) {
             glm::mat4 model = glm::translate(glm::mat4(), m_Position);
             model = glm::scale(model, glm::vec3((m_HalfSize)));
             glm::mat4 MVP = projection * view * model;
@@ -347,20 +364,30 @@ public:
             glUniform1f(glGetUniformLocation(shader, "Level"), (float)m_Level);
             glUniform3f(glGetUniformLocation(shader, "Normal"), m_Normal.x, m_Normal.y, m_Normal.z);
             glUniform3f(glGetUniformLocation(shader, "Position"), camPos.x, camPos.y, camPos.z);
-            renderSphereSolid();
-        }
+            glUniform1i(glGetUniformLocation(shader, "distanceFields"), gui::distanceFields);
+            glUniform1i(glGetUniformLocation(shader, "lighting"), gui::lighting);
 
+            if(gui::mode == gui::SPHERE) {
+                renderSphereSolid();
+            } else if(gui::mode == gui::CUBE) {
+                renderCubeSolid();
+            } else if(gui::mode == gui::WIREFRAME) {
+                renderCubeWireframe();
+            }
+        }
+#pragma omp parellel for simd
+{
         for(auto c: m_Childs) {
             if(c.second == nullptr) {
                 continue;
             }
             c.second->RenderNode(shader, projection, view);
         }
+}
     }
 
 private:
     std::unordered_map<int, std::shared_ptr<OctreeNode> > m_Childs;
-    std::shared_ptr<OctreeNode> m_Parent;
 
     glm::vec3 m_Position;
     float m_HalfSize = 0;
@@ -368,7 +395,7 @@ private:
     PointSet m_Normals;
     AABB m_BoundingBox;
     int m_Level;
-    int m_MaxLevel = 9;
+    int m_MaxLevel = 7;
     int numberOfChilds = 0;
     glm::vec3 m_Normal;
     bool isLeaf = false;
