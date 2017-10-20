@@ -1,11 +1,12 @@
 #pragma once
-
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 #include <AntTweakBar.h>
 
 namespace gui {
 
-bool running = true;
-bool autorotate;
+static bool running = true;
+static bool autorotate;
 
 
 inline void TwEventMouseButtonGLFW3(GLFWwindow* window, int button, int action, int mods) {
@@ -27,18 +28,18 @@ inline void TwWindowSizeGLFW3(GLFWwindow* window, int width, int height) {
     TwWindowSize(width, height);
 }
 
-void TW_CALL CLOSE(void* clientstate) {
+static void TW_CALL CLOSE(void* clientstate) {
     running = false;
 }
 
 typedef enum { WIREFRAME, CUBE, SPHERE } RenderingMode;
-RenderingMode mode = WIREFRAME;
-bool leafsOnly = false;
-bool distanceFields = false;
-bool lighting = false;
-int Level = -1;
+static RenderingMode mode = WIREFRAME;
+static bool leafsOnly = false;
+static bool distanceFields = false;
+static bool lighting = false;
+static int Level = -1;
 
-void initGUI(int width, int height, GLFWwindow* window) {
+static void initGUI(int width, int height, GLFWwindow* window) {
 
     TwInit(TW_OPENGL, nullptr);
     TwWindowSize(width, height);
@@ -54,7 +55,7 @@ void initGUI(int width, int height, GLFWwindow* window) {
     TwAddVarRW(myBar, "Use lighting", TW_TYPE_BOOL8 ,&lighting, " label='Use lighting' ");
 
     TwAddVarRW(myBar, "Salir", TW_TYPE_INT32, &Level,
-               " label='FPS' help='Color and transparency of the cube.' ");
+               " label='Level' help='Color and transparency of the cube.' ");
 
 
 

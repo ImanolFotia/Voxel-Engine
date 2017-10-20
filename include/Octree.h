@@ -1,7 +1,7 @@
 #pragma once
 
 #include <include/Node.h>
-
+#include <include/PointCloud.h>
 class Octree {
 public:
     Octree(PointSet pointSet) : m_PointSet(pointSet) {
@@ -21,8 +21,8 @@ public:
     ~Octree() {
         OctreeNode* tmp = m_RootNode.get();}
 
-    void Render(GLuint shader, glm::mat4 projection, glm::mat4 view) {
-        m_RootNode->RenderNode(shader, projection, view);
+    void Render(std::vector<glm::vec3>& positions, std::vector<glm::vec3> &normals, std::vector<float>& scales) {
+        m_RootNode->RenderNode(positions, normals, scales);
     }
 
     void addNode(std::shared_ptr<OctreeNode> parent, int key) {
@@ -46,9 +46,7 @@ private:
     void getSize() {
         float x = 0, y = 0, z = 0;
         float mx = 0, my = 0, mz = 0;
-        #pragma omp parellel for simd
         {
-        #pragma omp simd
         for(size_t i = 0; i < m_PointSet.size(); ++i) {
             float tmpx = m_PointSet[i].x;
             if( tmpx > x ) {

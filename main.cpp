@@ -7,12 +7,11 @@
 #include <GLFW/glfw3.h>
 #include <include/camera.h>
 #include <include/shader.h>
-#include <include/Node.h>
 #include <random>
 #include <ctime>
 #include <include/Octree.h>
-#include <include/PointCloud.h>
 #include <include/Model.h>
+#include <include/Cube.h>
 #include <include/gui.h>
 
 using namespace std;
@@ -20,24 +19,27 @@ using namespace std;
 void mouse_callback();
 void Do_Movement();
 
-Camera camera(glm::vec3(0,0,0));
+static Camera camera(glm::vec3(0,0,0));
 
-GLfloat lastX = 400, lastY = 300;
-bool firstMouse = true;
-bool keys[1024];
+static GLfloat lastX = 400, lastY = 300;
+static bool firstMouse = true;
+static bool keys[1024];
 
-double deltaTime, lastFrame;
+static double deltaTime, lastFrame;
 
-float mouseScrollY = 10;
-const float width = 1280, height = 720;
+static float mouseScrollY = 10;
+static const float width = 1280, height = 720;
 
-GLFWwindow* window;
+static GLFWwindow* window;
 
+static int currentLevel;
+static bool currentMode;
 
+static bool StateChanged();
 
 int main() {
     glfwInit();
-    window = glfwCreateWindow(width, height, "Sparse Voxel Octree", 0, nullptr);
+    window = glfwCreateWindow(width, height, "Sparse Voxel Octree", nullptr, nullptr);
     glfwMakeContextCurrent(window);
 
     glewExperimental = true;
@@ -53,16 +55,29 @@ int main() {
 
     gui::initGUI(width, height, window);
 
-    std::shared_ptr<Model> model = (std::shared_ptr<Model>) new Model("bunny.eml");
+    currentLevel = gui::Level = -1;
+    currentMode = gui::leafsOnly = false;
+    std::shared_ptr<Model> model = (std::shared_ptr<Model>) new Model("dragon.eml");
 
-    std::shared_ptr<PointCloud> pointCloud = ( std::shared_ptr<PointCloud> ) new PointCloud( model->getVertices(), model->getNormals());
+    std::shared_ptr<PointCloud> pointCloud = ( std::shared_ptr<PointCloud> ) new PointCloud( model->getVertices(), model->getNormals(), model->getIndices());
 
     std::shared_ptr<Octree> SVO = ( std::shared_ptr<Octree> ) new Octree( pointCloud->getPointsPositions(), pointCloud->getPointsNormals() );
 
     glm::mat4 projection = glm::perspective( glm::radians(75.0f), width/height, 0.1f, 3000.0f );
 
-
     TwSetCurrentWindow(0);
+
+    Cube* cubesInstanced;
+    std::vector<glm::vec3> cPositions;
+    std::vector<glm::vec3> cNormals;
+    std::vector<float> cScales;
+
+    //gui::leafsOnly  =true;
+    //gui::Level = 3;
+
+    SVO->Render( cPositions, cNormals, cScales );
+
+    cubesInstanced = new Cube(cPositions, cNormals, cScales);
 
     while( gui::running ) {
 
@@ -93,8 +108,33 @@ int main() {
         if( false ) {
             pointCloud->Render(shader, projection, camera.GetViewMatrix());
         }
+/*
+        if(currentLevel != gui::Level){
 
-        SVO->Render( shader, projection, camera.GetViewMatrix() );
+            std::cout << "State Changed" << std::endl;
+            std::cout << "currentLevel " << currentLevel << std::endl;
+            std::cout << "gui::Level " << gui::Level << std::endl;
+            cubesInstanced->Destroy();
+            delete cubesInstanced;
+
+            cPositions.clear();
+            std::vector<glm::vec3>().swap(cPositions);
+            cNormals.clear();
+            std::vector<glm::vec3>().swap(cNormals);
+            cScales.clear();
+            std::vector<float>().swap(cScales);
+
+            SVO->Render( cPositions, cNormals, cScales );
+
+            cubesInstanced = new Cube(cPositions, cNormals, cScales);
+            currentLevel = gui::Level;
+        }*/
+
+        glUniformMatrix4fv(glGetUniformLocation(shader, "view"), 1, GL_FALSE, &camera.GetViewMatrix()[0][0]);
+        glUniformMatrix4fv(glGetUniformLocation(shader, "projection"), 1, GL_FALSE, &projection[0][0]);
+        glUniform3fv(glGetUniformLocation(shader, "viewPos"), 1, &camera.Position[0]);
+        glUniform1i(glGetUniformLocation(shader, "distanceFields"), gui::distanceFields);
+        cubesInstanced->Render();
 
         glUseProgram(0);
 
@@ -108,7 +148,21 @@ int main() {
     TwTerminate();
     glfwTerminate();
 
+    cubesInstanced->Destroy();
+    delete cubesInstanced;
+
     return 0;
+}
+
+bool StateChanged()
+{
+    if(currentLevel != gui::Level)
+    {
+        std::cout << "State Changed" << std::endl;
+        return true;
+    }
+    else
+        return false;
 }
 
 // Moves/alters the camera positions based on user input
@@ -127,7 +181,7 @@ void Do_Movement() {
 }
 
 // Is called whenever a key is pressed/released via GLFW
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
     //cout << key << endl;
     if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);

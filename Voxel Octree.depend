@@ -1,16 +1,15 @@
 # depslib dependency file v1.0
-1497242856 source:c:\users\imanol\documents\code\c++\voxel octree\main.cpp
+1507758808 source:c:\users\imanol\documents\code\c++\voxel octree\main.cpp
 	<iostream>
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<include/camera.h>
 	<include/shader.h>
-	<include/Node.h>
 	<random>
 	<ctime>
 	<include/Octree.h>
-	<include/PointCloud.h>
 	<include/Model.h>
+	<include/Cube.h>
 	<include/gui.h>
 
 1491765163 c:\users\imanol\documents\code\c++\voxel octree\node.h
@@ -42,13 +41,13 @@
 	<GL/glew.h>
 	<iostream>
 
-1492551770 c:\users\imanol\documents\code\c++\voxel octree\include\camera.h
+1504995806 c:\users\imanol\documents\code\c++\voxel octree\include\camera.h
 	<vector>
 	<GL/glew.h>
 	<glm/glm.hpp>
 	<glm/gtc/matrix_transform.hpp>
 
-1499195061 c:\users\imanol\documents\code\c++\voxel octree\include\node.h
+1508472311 c:\users\imanol\documents\code\c++\voxel octree\include\node.h
 	<unordered_map>
 	<memory>
 	<glm/glm.hpp>
@@ -59,6 +58,7 @@
 	<include/Model.h>
 	<cstdio>
 	<include/gui.h>
+	<include/TriBoxCollision.h>
 
 1491702821 c:\users\imanol\documents\code\c++\voxel octree\include\bunny.h
 
@@ -66,10 +66,11 @@
 
 1491707460 c:\users\imanol\documents\code\c++\voxel octree\include\pelbis.h
 
-1497242707 c:\users\imanol\documents\code\c++\voxel octree\include\octree.h
+1504990431 c:\users\imanol\documents\code\c++\voxel octree\include\octree.h
 	<include/Node.h>
+	<include/PointCloud.h>
 
-1497242760 c:\users\imanol\documents\code\c++\voxel octree\include\pointcloud.h
+1503684543 c:\users\imanol\documents\code\c++\voxel octree\include\pointcloud.h
 	<vector>
 	<glm/glm.hpp>
 	<GL/glew.h>
@@ -214,6 +215,21 @@
 	<string>
 	<string>
 
-1492144986 c:\users\imanol\documents\code\c++\voxel octree\include\gui.h
+1504997218 c:\users\imanol\documents\code\c++\voxel octree\include\gui.h
+	<GL/glew.h>
+	<GLFW/glfw3.h>
 	<AntTweakBar.h>
+
+1503685487 c:\users\imanol\documents\code\c++\voxel octree\include\triboxcollision.h
+	<glm/glm.hpp>
+
+1504996495 c:\users\imanol\documents\code\c++\voxel octree\include\cube.h
+	<GL/glew.h>
+	<string>
+	<iostream>
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+
+1505761918 source:c:\users\imanol\documents\code\c++\voxel octree\src\node.cpp
+	<include/Node.h>
 

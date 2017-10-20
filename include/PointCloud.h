@@ -17,7 +17,17 @@ public:
     {
 
     }
+    PointCloud(std::vector<glm::vec3> positions, std::vector<glm::vec3> normals, std::vector<unsigned int> indices)
+    {
+        m_PointIndices = indices;
 
+        for(int i = 0; i < m_PointIndices.size(); i++)
+        {
+            m_PointPositions.push_back(positions.at(m_PointIndices.at(i)));
+            m_PointNormals.push_back(normals.at(m_PointIndices.at(i)));
+        }
+
+    }
     PointCloud(float rawPositions[], int numP)
     {
         #pragma omp parallel for simd
@@ -47,7 +57,7 @@ public:
 
         glBindVertexArray(VAO);
 
-        #pragma omp parellel for simd
+        //#pragma omp parellel for simd
         {
         #pragma omp single
         for(auto i: m_PointPositions)
@@ -83,6 +93,7 @@ private:
     GLuint VAO, VBO;
     std::vector<glm::vec3> m_PointPositions;
     std::vector<glm::vec3> m_PointNormals;
+    std::vector<unsigned int> m_PointIndices;
     glm::vec3 point = glm::vec3(0,0,0);
 
 };

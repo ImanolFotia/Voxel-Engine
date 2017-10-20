@@ -50,15 +50,20 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="include/Cube.h" />
 		<Unit filename="include/Model.h" />
-		<Unit filename="include/Node.h" />
+		<Unit filename="include/Node.h">
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="include/Octree.h" />
 		<Unit filename="include/PointCloud.h" />
+		<Unit filename="include/TriBoxCollision.h" />
 		<Unit filename="include/camera.h" />
 		<Unit filename="include/emlFormat.h" />
 		<Unit filename="include/gui.h" />
 		<Unit filename="include/shader.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="src/Node.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
